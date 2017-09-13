@@ -1,10 +1,17 @@
 # Chord
 
 ## Introduction
-	Chord is a protocol and algorithm for a peer-to-peer distributed hash table. A distributed hash table stores key-value pairs by assigning keys to different computers (known as "nodes"); a node will store the values for all the keys for which it is responsible. Chord specifies how keys are assigned to nodes, and how a node can discover the value for a given key by first locating the node responsible for that key.
+	Chord is a protocol and algorithm for a peer-to-peer distributed hash table. A distributed hash 
+table stores key-value pairs by assigning keys to different computers (known as "nodes"); a node will 
+store the values for all the keys for which it is responsible. Chord specifies how keys are assigned to
+nodes, and how a node can discover the value for a given key by first locating the node responsible for
+that key.
 
 ## Overview 
-	Using the Chord lookup protocol, nodes and keys are arranged in an identifier circle that has at most 2^{m} nodes, ranging from 0 to 2^m − 1 .(m should be large enough to avoid collision.) Some of these nodes will map to machines or keys while others (most) will be empty. Each node has a successor and a predecessor. The successor to a node is the next node in the identifier circle in a clockwise direction.
+	Using the Chord lookup protocol, nodes and keys are arranged in an identifier circle that has at
+ most 2^m nodes, ranging from 0 to 2^m − 1 .(m should be large enough to avoid collision.) Some of these
+ nodes will map to machines or keys while others (most) will be empty. Each node has a successor and a predecessor.
+ The successor to a node is the next node in the identifier circle in a clockwise direction.
 
 ## Functionality Supported
 	* join
