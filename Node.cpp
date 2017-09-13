@@ -118,7 +118,7 @@ void   Node :: join(string ip, int port, int id)
 	{
 		init_finger_table(ip,port,id);
 		isInitialized=1;
-		update_others();
+		// update_others();
 		
 	}
 }
@@ -133,7 +133,7 @@ void   Node :: init_finger_table(string remote_ip, int remote_port, int remote_i
 	* Prepare message to call remote method Find_successor
 	* Format: "rqst:find_successor;id:2"
 	*/
-	string s="";
+	string s;
 	s=s.append(K_RQST).append(K_EQUAL).append("find_succesor").append(K_DELIMETER)
 		.append(K_ID).append(K_EQUAL).append(to_string(fingerTable[0].intervalStart))
 		.append(K_DELIMETER);
@@ -152,7 +152,7 @@ void   Node :: init_finger_table(string remote_ip, int remote_port, int remote_i
 	* Prepare message to call remote method Get_predecessor
 	* Format: "rqst:find_successor;id:2"
 	*/
-	s="";
+	s.clear();
 	s=s.append(K_RQST).append(K_EQUAL).append("get_predecessor").append(K_DELIMETER);
 	client.set_server_ip(fingerTable[0].ip);
 	client.set_server_port(fingerTable[0].port);
@@ -167,11 +167,12 @@ void   Node :: init_finger_table(string remote_ip, int remote_port, int remote_i
 	* Prepare message to call remote method Update_predecessor
 	* Format: "rqst:update_predecessor;id:2;ip:10.42.0.1;port:2099......"
 	*/
-	s="";
+	s.clear();
 	s=s=s.append(K_RQST).append(K_EQUAL).append("update_predecessor").append(K_DELIMETER)
 		.append(K_ID).append(K_EQUAL).append(to_string(this->id)).append(K_DELIMETER)
 		.append(K_IP).append(K_EQUAL).append(server.get_server_ip()).append(K_DELIMETER)
 		.append(K_PORT).append(K_EQUAL).append(to_string(server.get_server_port())).append(K_DELIMETER);
+
 	client.set_server_ip(fingerTable[0].ip);
 	client.set_server_port(fingerTable[0].port);
 	resp=client.call_server_method(s,"NOT YET IMPLEMENTED");
@@ -201,7 +202,7 @@ void   Node :: init_finger_table(string remote_ip, int remote_port, int remote_i
 		*/
 		else
 		{
-			s="";
+			s.clear();
 			s=s.append(K_RQST).append(K_EQUAL).append("find_succesor").append(K_DELIMETER)
 				.append(K_ID).append(K_EQUAL).append(to_string(fingerTable[i].intervalStart))
 				.append(K_DELIMETER);
@@ -229,24 +230,21 @@ void   Node :: update_others()
 
 	for(i=0;i<NUMBER_OF_BITS;i++)
 	{
-		s="";
+		s.clear();
 		num=((2<<(NUMBER_OF_BITS-1))+(this->id-p))%(2<<(NUMBER_OF_BITS-1));
 		s=s.append(K_ID).append(K_EQUAL).append(to_string(num)).append(K_DELIMETER);
-		printf("[DEBUG][INSIDE update_others] FINDING predecessor %d\n",num);
 		s=find_predecessor(s);
 		uip=get_value(K_IP,s);
 		uport=atoi(get_value(K_PORT,s).c_str());
-		printf("[DEBUG][INSIDE update_others] UIP %s UPORT %d\n",uip.c_str(),uport);
 		client.set_server_ip(uip);
 		client.set_server_port(uport);
-		s="";
+		s.clear();
 		s=s.append(K_ID).append(K_EQUAL).append(to_string(this->id)).append(K_DELIMETER)
 			.append(K_IP).append(K_EQUAL).append(server.get_server_ip()).append(K_DELIMETER)
 			.append(K_PORT).append(K_EQUAL).append(to_string(server.get_server_port()))
 			.append(K_DELIMETER)
 			.append(K_IND).append(K_EQUAL).append(to_string(i)).append(K_DELIMETER)
 			.append(K_RQST).append(K_EQUAL).append("update_finger_table").append(K_DELIMETER);
-		printf("[DEBUG][INSIDE UPDATE] ITERATION NUMBER %d SENDING INFO %s\n",i,s.c_str());
 		client.call_server_method(s,"NOT YET IMPLEMENTED");
 		p=p*2;
 	}
@@ -262,8 +260,6 @@ string Node :: update_finger_table(string info)
 	int id = atoi(get_value(K_ID,info).c_str());
 	if(does_belong(id,this->id,fingerTable[i].node-1))
 	{
-		printf("[DEBUG][INSIDE update_finger_table] ID %d N %d FINGER_NODE %d\n", 
-			id,this->id,fingerTable[i].node);
 		fingerTable[i].node = id;
 		fingerTable[i].ip = get_value(K_IP,info);
 		fingerTable[i].port = atoi(get_value(K_PORT,info).c_str());
@@ -279,7 +275,7 @@ string Node :: update_finger_table(string info)
 */
 string Node :: find_succesor(string info)
 {
-	string s="";
+	string s;
 	string predecessor = find_predecessor(info);
 	string predecessor_ip = get_value(K_IP,predecessor);
 	int predecessor_port = atoi(get_value(K_PORT,predecessor).c_str());
@@ -321,7 +317,7 @@ string Node :: find_predecessor(string info)
 	*/
 	while(!does_belong(targetid, mysuccessor_id+1,myid))
 	{
-		s = "";
+		s.clear();
 		s = s.append(K_ID).append(K_EQUAL).append(s_targetid).append(K_DELIMETER)
 			.append(K_RQST).append(K_EQUAL).append("closest_preceding_finger")
 			.append(K_DELIMETER);
@@ -335,7 +331,7 @@ string Node :: find_predecessor(string info)
 		myid = atoi(get_value(K_ID,s).c_str());
 		my_ip= get_value(K_IP,s);
 		my_port = atoi(get_value(K_PORT,s).c_str());
-		s = "";
+		s.clear();
 		s = s.append(K_RQST).append(K_EQUAL).append("get_successor").append(K_DELIMETER);
 		client.set_server_ip(my_ip);
 		client.set_server_port(my_port);
@@ -347,7 +343,7 @@ string Node :: find_predecessor(string info)
 		
 	}
 
-	string resp="";
+	string resp;
 	resp = resp.append(K_ID).append(K_EQUAL).append(to_string(myid)).append(K_DELIMETER)
 			.append(K_IP).append(K_EQUAL).append(my_ip).append(K_DELIMETER)
 			.append(K_PORT).append(K_EQUAL).append(to_string(my_port)).append(K_DELIMETER);
@@ -356,7 +352,7 @@ string Node :: find_predecessor(string info)
 /* Method that returns successor of current_node; mostly called from remote Node*/
 string Node :: get_successor()
 {
-		string s="";
+		string s;
 		s=	s.append(K_ID).append(K_EQUAL).append(to_string(fingerTable[0].node))
 			.append(K_DELIMETER)
 			.append(K_IP).append(K_EQUAL).append(fingerTable[0].ip)
@@ -368,7 +364,7 @@ string Node :: get_successor()
 /* Method that returns predecessor of current_node; mostly called from remote Node*/
 string Node :: get_predecessor()
 {
-		string s="";
+		string s;
 		s=	s.append(K_ID).append(K_EQUAL).append(to_string(predecessor_id))
 			.append(K_DELIMETER)
 			.append(K_IP).append(K_EQUAL).append(predecessor_ip)
@@ -387,7 +383,7 @@ string Node :: closest_preceding_finger(string info)
 	{
 		if(does_belong(fingerTable[i].node,this->id+1,id-1))
 		{
-			s="";
+			s.clear();
 			s=	s.append(K_ID).append(K_EQUAL).append(to_string(fingerTable[i].node))
 				.append(K_DELIMETER)
 				.append(K_IP).append(K_EQUAL).append(fingerTable[i].ip)
@@ -398,7 +394,7 @@ string Node :: closest_preceding_finger(string info)
 		}
 	}
 
-	s="";
+	s.clear();
 	s=	s.append(K_ID).append(K_EQUAL).append(to_string(this->id))
 		.append(K_DELIMETER)
 		.append(K_IP).append(K_EQUAL).append(server.get_server_ip())
@@ -460,8 +456,6 @@ bool   Node :: does_belong(int id,int start, int end)
 {
 	start=((2<<(NUMBER_OF_BITS-1))+(start))%(2<<(NUMBER_OF_BITS-1));
 	end=((2<<(NUMBER_OF_BITS-1))+(end))%(2<<(NUMBER_OF_BITS-1));
-
-	printf("[DEBUG][INSIDE does_belong] CHECKING %d IN [%d,%d]\n",id,start,end);
 	if(end<start)
 		return !(id > end && id < start);
 
