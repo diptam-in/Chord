@@ -21,6 +21,6 @@ The successor to a node is the next node in the identifier circle in a clockwise
 
 ## How to:
 ### Compile:
-	Run **compile.sh**
+	Run compile.sh
 ### Run:
-	Run **start.sh <PORT NUMBER> <ID> <NETWORK INTERFACE NAME>**
+	Run start.sh <PORT NUMBER> <ID> <NETWORK INTERFACE NAME>
