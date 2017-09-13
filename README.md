@@ -18,3 +18,9 @@ The successor to a node is the next node in the identifier circle in a clockwise
 	* put <key,value>
 	* get <key>
 [Original Paper Link](http://nms.lcs.mit.edu/papers/chord.pdf)
+
+## How to:
+### Compile:
+	Run **compile.sh**
+### Run:
+	Run **start.sh <PORT NUMBER> <ID> <NETWORK INTERFACE NAME>**
